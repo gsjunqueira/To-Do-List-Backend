@@ -2,7 +2,7 @@
 
 Esta é uma API simples de gerenciamento de tarefas construída em **Node.js** com **Express**. Ela permite criar, atualizar, listar e excluir tarefas. A autenticação é feita via **GitHub**.
 
-![API no Insomnia](./assets/insomnia.png)
+![API no Insomnia](assest/insomnia.png)
 
 ## Funcionalidades
 
