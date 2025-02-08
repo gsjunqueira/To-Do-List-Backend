@@ -73,7 +73,10 @@ app.get('/tarefas', validAuth, async (req, res) => {
     return res.json(tarefas)
 
   } catch {
-      return res.status(500).json({ erro: "Não foi possível obter as tarefas" })
+      if (error instanceof bancoDeDados.ErrorDataBase) { 
+        return res.status(404).json({ erro: error.message})
+      }
+      res.status(500).json({ erro: "Não foi possível obter as tarefas" })
   }
 })
 app.get('/tarefa/:id', validAuth, async (req, res) => {
@@ -82,7 +85,10 @@ app.get('/tarefa/:id', validAuth, async (req, res) => {
     const tarefa = tarefas.find(tarefa => tarefa.id == req.params.id)
     return res.json(tarefa)
   } catch {
-      return res.status(500).json({ erro: "Não foi possível obter a tarefa" })
+    if (error instanceof bancoDeDados.ErrorDataBase) { 
+      return res.status(404).json({ erro: error.message})
+    }
+    res.status(500).json({ erro: "Não foi possível obter a tarefa" })
   }
 })
 

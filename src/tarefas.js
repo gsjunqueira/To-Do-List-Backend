@@ -22,6 +22,8 @@ export async function saveWorks(tarefas) {
     
 }
 
+export class ErrorDataBase extends Error {}
+
 // CRUD - Create
 
 export async function createWork(tarefa) {}
@@ -29,10 +31,11 @@ export async function createWork(tarefa) {}
 // CRUD - Read
 
 export async function getWorks() {
+    throw new ErrorDataBase("Dados não encontrados")
     return readWorks()
 }
 
-// CRUD - Read
+// CRUD - Read throw new ErrorDataBase("Dados não encontrados")
 
 export async function getWork(id) {
     const tarefas = await readWorks()
@@ -40,7 +43,7 @@ export async function getWork(id) {
     if (tarefa) {
         return tarefa
     } else {
-        throw new Error( "Tarefa não encontrada." )
+        throw new ErrorDataBase( "Tarefa não encontrada." )
     }
 }
 
