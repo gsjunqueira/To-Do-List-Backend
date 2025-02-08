@@ -28,12 +28,21 @@ export async function createWork(tarefa) {}
 
 // CRUD - Read
 
-export async function getWorks() {}
+export async function getWorks() {
     return readWorks()
+}
 
 // CRUD - Read
 
-export async function getWork(id) {}
+export async function getWork(id) {
+    const tarefas = await readWorks()
+    const tarefa = tarefas.find(tarefa => tarefa.id == id)
+    if (tarefa) {
+        return tarefa
+    } else {
+        throw new Error( "Tarefa não encontrada." )
+    }
+}
 
 // CRUD - Update
 

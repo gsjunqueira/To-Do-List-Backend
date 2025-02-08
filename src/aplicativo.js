@@ -1,6 +1,7 @@
 import express from 'express'
 import cors from 'cors'
 import {readWorks, saveWorks} from './tarefas.js'
+import * as bancoDeDados from './tarefas.js'
 import passport from 'passport'
 import {Strategy as GitHubStrategy} from 'passport-github2'
 import session from 'express-session'
@@ -68,7 +69,7 @@ app.get('/', (req, res) => res.send(`Ola Tarefas!`))
 
 app.get('/tarefas', validAuth, async (req, res) => {
   try {
-    const tarefas = await readWorks()
+    const tarefas = await bancoDeDados.getWorks()
     return res.json(tarefas)
 
   } catch {
@@ -77,13 +78,9 @@ app.get('/tarefas', validAuth, async (req, res) => {
 })
 app.get('/tarefa/:id', validAuth, async (req, res) => {
   try {
-    const tarefas = await readWorks()
+    const tarefas = await bancoDeDados.getWork(req.params.id)
     const tarefa = tarefas.find(tarefa => tarefa.id == req.params.id)
-    if (tarefa) {
-      return res.json(tarefa)
-    } else {
-      return res.status(404).json({ erro: "A tarefa não existe." })
-    }
+    return res.json(tarefa)
   } catch {
       return res.status(500).json({ erro: "Não foi possível obter a tarefa" })
   }
