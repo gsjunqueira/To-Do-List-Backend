@@ -64,7 +64,7 @@ app.get('/logout', (req, res, next) => {
   })
 })
 
-app.get('/', (req, res) => res.send(`Hello Tarefas!`))
+app.get('/', (req, res) => res.send(`Ola Tarefas!`))
 
 app.get('/tarefas', validAuth, async (req, res) => {
   try {

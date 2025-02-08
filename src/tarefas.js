@@ -21,3 +21,24 @@ export async function saveWorks(tarefas) {
     }
     
 }
+
+// CRUD - Create
+
+export async function createWork(tarefa) {}
+
+// CRUD - Read
+
+export async function getWorks() {}
+    return readWorks()
+
+// CRUD - Read
+
+export async function getWork(id) {}
+
+// CRUD - Update
+
+export async function updateWork(id, tarefa) {}
+
+// CRUD - Delete
+
+export async function deleteWork(id) {}
