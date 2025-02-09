@@ -94,28 +94,16 @@ app.get('/tarefa/:id', validAuth, async (req, res) => {
 
 app.post('/tarefa', validAuth, async (req, res) => {
   try {
-    const { Descricao, completa } = req.body
-    if (typeof Descricao !== 'string' || !Descricao.trim()) {
-      return res.status(400).json({ erro: 'O campo "descricao" é obrigatório e deve ser texto.' })
-    }
-    if (typeof completa !== 'boolean' && completa !== undefined) {
-      return res.status(400).json({ erro: 'O campo "completa" deve ser booleano.' })
-    }
-
-    const novaTarefa = {
-      "id": Date.now(),
-      Descricao,
-      completa: !!completa
-    }
+    const novatarefa = await bancoDeDados.createWork(req.body)
     
-    const tarefas = await readWorks()
-    tarefas.push(novaTarefa)
-    await saveWorks(tarefas)
-
-    return res.status(201).json(novaTarefa)
+    res.status(201).json(novaTarefa)
   } catch {
-      return res.status(500).json({ erro: "Não foi possível criar a tarefa" })
+    if (error instanceof bancoDeDados.ErrorDataBase) { 
+      return res.status(400).json({ erro: error.message})
+    }
+    res.status(500).json({ erro: "Não foi possível obter a tarefa" })
   }
+
 })
 
 app.put('/tarefa/:id', validAuth, async (req, res) => {

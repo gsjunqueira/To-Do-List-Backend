@@ -26,7 +26,27 @@ export class ErrorDataBase extends Error {}
 
 // CRUD - Create
 
-export async function createWork(tarefa) {}
+export async function createWork(tarefa) {
+    const { Descricao, completa } = tarefa
+    if (typeof Descricao !== 'string' || !Descricao.trim()) {
+        throw new ErrorDataBase ( 'O campo "descricao" é obrigatório e deve ser texto.' )
+    }
+    if (typeof completa !== 'boolean' && completa !== undefined) {
+        throw new ErrorDataBase ( 'O campo "completa" deve ser booleano.' )
+    }
+
+    const novaTarefa = {
+        "id": Date.now(),
+        Descricao,
+        completa: !!completa
+    }
+    
+    const tarefas = await readWorks()
+    tarefas.push(novaTarefa)
+    await saveWorks(tarefas)
+    
+    return novaTarefa
+}
 
 // CRUD - Read
 
