@@ -14,15 +14,13 @@ export async function createWork(tarefa) {
         throw new ErroDeValidacao ( 'O campo "completa" deve ser booleano.' )
     }
 
-    const novaTarefa = {
-        "id": Date.now(),
-        Descricao,
-        completa: !!completa
-    }
     
-    const tarefas = await readWorks()
-    tarefas.push(novaTarefa)
-    await saveWorks(tarefas)
+    const novaTarefa = await prisma.tarefa.create({
+        data: {
+            Descricao,
+            completa: !!completa
+        }
+    })
 
     return novaTarefa
 }

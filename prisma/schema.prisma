@@ -15,6 +15,6 @@ datasource db {
 
 model Tarefa {
   id        String     @id @default(uuid())
-  descricao String
+  Descricao String
   completa  Boolean
 }
