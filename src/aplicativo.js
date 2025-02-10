@@ -74,7 +74,7 @@ app.get('/tarefas', validAuth, async (req, res) => {
 
   } catch {
       if (error instanceof bancoDeDados.ErrorDataBase) { 
-        return res.status(404).json({ erro: error.message})
+        res.status(404).json({ erro: error.message})
       }
       res.status(500).json({ erro: "Não foi possível obter as tarefas" })
   }
@@ -86,7 +86,7 @@ app.get('/tarefa/:id', validAuth, async (req, res) => {
     return res.json(tarefa)
   } catch {
     if (error instanceof bancoDeDados.ErrorDataBase) { 
-      return res.status(404).json({ erro: error.message})
+      res.status(404).json({ erro: error.message})
     }
     res.status(500).json({ erro: "Não foi possível obter a tarefa" })
   }
@@ -99,7 +99,7 @@ app.post('/tarefa', validAuth, async (req, res) => {
     res.status(201).json(novaTarefa)
   } catch {
     if (error instanceof bancoDeDados.ErrorDataBase) { 
-      return res.status(400).json({ erro: error.message})
+      res.status(400).json({ erro: error.message})
     }
     res.status(500).json({ erro: "Não foi possível obter a tarefa" })
   }
@@ -113,68 +113,53 @@ app.put('/tarefa/:id', validAuth, async (req, res) => {
   } catch {
       if (error instanceof bancoDeDados.ErrorDataBase) { 
         const httpCode = error instanceof bancoDeDados.ErroDeValidacao ? 4040: 404
-        return res.status(httpCode).json({ erro: error.message})
+        res.status(httpCode).json({ erro: error.message})
       }
-      return res.status(500).json({ erro: "Não foi possível atualizar a tarefa" })
+      res.status(500).json({ erro: "Não foi possível atualizar a tarefa" })
   }
 })
 
 app.delete('/tarefa/:id', validAuth, async (req, res) => {
   try {
-    const tarefas = await readWorks()
-    const index = tarefas.findIndex(tarefa => tarefa.id == req.params.id)
-    if (index < 0) {
-      return res.status(404).json({ erro: "A tarefa não existe." })
-    }
-
-
-    tarefas.splice(index, 1)
-    await saveWorks(tarefas)
-
-    return res.status(204).send()
-  } catch {
-
-      return res.status(500).json({ erro: "Não foi possível apagar a tarefa" })
+    await bancoDeDados.deleteWork(req.params.id)
+    
+    res.status(204).send()
+    } catch {
+      if (error instanceof bancoDeDados.ErrorDataBase) { 
+        const httpCode = error instanceof bancoDeDados.ErroDeValidacao ? 4040: 404
+        res.status(httpCode).json({ erro: error.message})
+      }
+      res.status(500).json({ erro: "Não foi possível apagar a tarefa" })
   }
 })
 
 app.patch('/tarefa/:id/completa', validAuth, async (req, res) => {
   try {
-    const { Descricao, completa } = req.body
-
-    const tarefas = await readWorks()
-    const index = tarefas.findIndex(tarefa => tarefa.id == req.params.id)
-    if (index < 0) {
-      return res.status(404).json({ erro: "A tarefa não existe." })
-    }
-
-    tarefas[index].completa = true
-  
-    await saveWorks(tarefas)
-
-    return res.json(tarefas[index])
+    const tarefaAtualizada = await bancoDeDados.updateWork(req.params.id, {
+      completa: true  
+    })
+    res.json(tarefaAtualizada)
   } catch {
-      return res.status(500).json({ erro: "Não foi possível completar a tarefa" })
+      if (error instanceof bancoDeDados.ErrorDataBase) { 
+        const httpCode = error instanceof bancoDeDados.ErroDeValidacao ? 4040: 404
+        res.status(httpCode).json({ erro: error.message})
+      }
+      res.status(500).json({ erro: "Não foi possível completar a tarefa" })
   }
 })
 
 app.patch('/tarefa/:id/incompleta', validAuth, async (req, res) => {
   try {
-    const { Descricao, completa } = req.body
-
-    const tarefas = await readWorks()
-    const index = tarefas.findIndex(tarefa => tarefa.id == req.params.id)
-    if (index < 0) {
-      return res.status(404).json({ erro: "A tarefa não existe." })
-    }
-
-    tarefas[index].completa = false
-  
-    await saveWorks(tarefas)
-
-    return res.json(tarefas[index])
+    const tarefaAtualizada = await bancoDeDados.updateWork(req.params.id, {
+      completa: false  
+    })
+    res.json(tarefaAtualizada)
   } catch {
-      return res.status(500).json({ erro: "Não foi possível tornar a tarefa incompleta" })
+      if (error instanceof bancoDeDados.ErrorDataBase) { 
+        const httpCode = error instanceof bancoDeDados.ErroDeValidacao ? 4040: 404
+        res.status(httpCode).json({ erro: error.message})
+      }
+      res.status(500).json({ erro: "Não foi possível tornar a tarefa incompleta" })
   }
 })
 
