@@ -23,16 +23,18 @@ export async function saveWorks(tarefas) {
 }
 
 export class ErrorDataBase extends Error {}
+export class ErroDeValidacao extends ErrorDataBase {}
+export class ErroDeOperacao extends ErrorDataBase {}
 
 // CRUD - Create
 
 export async function createWork(tarefa) {
     const { Descricao, completa } = tarefa
     if (typeof Descricao !== 'string' || !Descricao.trim()) {
-        throw new ErrorDataBase ( 'O campo "descricao" é obrigatório e deve ser texto.' )
+        throw new ErroDeValidacao ( 'O campo "descricao" é obrigatório e deve ser texto.' )
     }
     if (typeof completa !== 'boolean' && completa !== undefined) {
-        throw new ErrorDataBase ( 'O campo "completa" deve ser booleano.' )
+        throw new ErroDeValidacao ( 'O campo "completa" deve ser booleano.' )
     }
 
     const novaTarefa = {
@@ -44,14 +46,14 @@ export async function createWork(tarefa) {
     const tarefas = await readWorks()
     tarefas.push(novaTarefa)
     await saveWorks(tarefas)
-    
+
     return novaTarefa
 }
 
 // CRUD - Read
 
 export async function getWorks() {
-    throw new ErrorDataBase("Dados não encontrados")
+    throw new ErroDeOperacao("Dados não encontrados")
     return readWorks()
 }
 
@@ -63,13 +65,40 @@ export async function getWork(id) {
     if (tarefa) {
         return tarefa
     } else {
-        throw new ErrorDataBase( "Tarefa não encontrada." )
+        throw new ErroDeOperacao( "Tarefa não encontrada." )
     }
 }
 
 // CRUD - Update
 
-export async function updateWork(id, tarefa) {}
+export async function updateWork(id, tarefa) {
+
+    const { Descricao, completa } = tarefa
+
+    const tarefas = await readWorks()
+    const index = tarefas.findIndex(tarefa => tarefa.id == id)
+    if (index < 0) {
+        throw new ErroDeOperacao("A tarefa não encontrada.")
+    }
+
+    if (typeof Descricao !== 'string' && Descricao !== undefined) {
+        throw new ErroDeValidacao('O campo "descricao" é obrigatório e deve ser texto.')
+    }
+    if (typeof completa !== 'boolean' && completa !== undefined) {
+        throw new ErroDeValidacao('O campo "completa" deve ser booleano.')
+    }
+    if (Descricao !== undefined) {
+        tarefas[index].Descricao = Descricao
+    }
+    if (completa !== undefined) {
+        tarefas[index].completa = completa
+    }
+
+    await saveWorks(tarefas)
+
+    return JSON.parse(JSON.stringify(tarefas[index]))
+
+}
 
 // CRUD - Delete
 

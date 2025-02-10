@@ -108,31 +108,13 @@ app.post('/tarefa', validAuth, async (req, res) => {
 
 app.put('/tarefa/:id', validAuth, async (req, res) => {
   try {
-    const { Descricao, completa } = req.body
-
-    const tarefas = await readWorks()
-    const index = tarefas.findIndex(tarefa => tarefa.id == req.params.id)
-    if (index < 0) {
-      return res.status(404).json({ erro: "A tarefa não existe." })
-    }
-
-    if (typeof Descricao !== 'string' && Descricao !== undefined) {
-      return res.status(400).json({ erro: 'O campo "descricao" é obrigatório e deve ser texto.' })
-    }
-    if (typeof completa !== 'boolean' && completa !== undefined) {
-      return res.status(400).json({ erro: 'O campo "completa" deve ser booleano.' })
-    }
-    if (Descricao !== undefined) {
-      tarefas[index].Descricao = Descricao
-    }
-    if (completa !== undefined) {
-      tarefas[index].completa = completa
-    }
-
-    await saveWorks(tarefas)
-
-    return res.json(tarefas[index])
+    const tarefaAtualizada = await bancoDeDados.updateWork(req.params.id, req.body)
+    res.json(tarefaAtualizada)
   } catch {
+      if (error instanceof bancoDeDados.ErrorDataBase) { 
+        const httpCode = error instanceof bancoDeDados.ErroDeValidacao ? 4040: 404
+        return res.status(httpCode).json({ erro: error.message})
+      }
       return res.status(500).json({ erro: "Não foi possível atualizar a tarefa" })
   }
 })
@@ -151,6 +133,7 @@ app.delete('/tarefa/:id', validAuth, async (req, res) => {
 
     return res.status(204).send()
   } catch {
+
       return res.status(500).json({ erro: "Não foi possível apagar a tarefa" })
   }
 })
