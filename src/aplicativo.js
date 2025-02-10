@@ -1,6 +1,5 @@
 import express from 'express'
 import cors from 'cors'
-import {readWorks, saveWorks} from './tarefas.js'
 import * as bancoDeDados from './tarefas.js'
 import passport from 'passport'
 import {Strategy as GitHubStrategy} from 'passport-github2'
@@ -72,7 +71,8 @@ app.get('/tarefas', validAuth, async (req, res) => {
     const tarefas = await bancoDeDados.getWorks()
     return res.json(tarefas)
 
-  } catch {
+  } catch (error) {
+      console.error(error)
       if (error instanceof bancoDeDados.ErrorDataBase) { 
         res.status(404).json({ erro: error.message})
       }
@@ -84,11 +84,12 @@ app.get('/tarefa/:id', validAuth, async (req, res) => {
     const tarefas = await bancoDeDados.getWork(req.params.id)
     const tarefa = tarefas.find(tarefa => tarefa.id == req.params.id)
     return res.json(tarefa)
-  } catch {
-    if (error instanceof bancoDeDados.ErrorDataBase) { 
-      res.status(404).json({ erro: error.message})
-    }
-    res.status(500).json({ erro: "Não foi possível obter a tarefa" })
+  } catch (error) {
+      console.error(error)
+      if (error instanceof bancoDeDados.ErrorDataBase) { 
+        res.status(404).json({ erro: error.message})
+      }
+      res.status(500).json({ erro: "Não foi possível obter a tarefa" })
   }
 })
 
@@ -97,11 +98,12 @@ app.post('/tarefa', validAuth, async (req, res) => {
     const novatarefa = await bancoDeDados.createWork(req.body)
     
     res.status(201).json(novaTarefa)
-  } catch {
-    if (error instanceof bancoDeDados.ErrorDataBase) { 
-      res.status(400).json({ erro: error.message})
-    }
-    res.status(500).json({ erro: "Não foi possível obter a tarefa" })
+  } catch (error) {
+      console.error(error)
+      if (error instanceof bancoDeDados.ErrorDataBase) { 
+        res.status(400).json({ erro: error.message})
+      }
+      res.status(500).json({ erro: "Não foi possível obter a tarefa" })
   }
 
 })
@@ -110,7 +112,8 @@ app.put('/tarefa/:id', validAuth, async (req, res) => {
   try {
     const tarefaAtualizada = await bancoDeDados.updateWork(req.params.id, req.body)
     res.json(tarefaAtualizada)
-  } catch {
+  } catch (error) {
+      console.error(error)
       if (error instanceof bancoDeDados.ErrorDataBase) { 
         const httpCode = error instanceof bancoDeDados.ErroDeValidacao ? 4040: 404
         res.status(httpCode).json({ erro: error.message})
@@ -124,12 +127,13 @@ app.delete('/tarefa/:id', validAuth, async (req, res) => {
     await bancoDeDados.deleteWork(req.params.id)
     
     res.status(204).send()
-    } catch {
-      if (error instanceof bancoDeDados.ErrorDataBase) { 
-        const httpCode = error instanceof bancoDeDados.ErroDeValidacao ? 4040: 404
-        res.status(httpCode).json({ erro: error.message})
-      }
-      res.status(500).json({ erro: "Não foi possível apagar a tarefa" })
+    } catch (error) {
+        console.error(error)
+        if (error instanceof bancoDeDados.ErrorDataBase) { 
+          const httpCode = error instanceof bancoDeDados.ErroDeValidacao ? 4040: 404
+          res.status(httpCode).json({ erro: error.message})
+        }
+        res.status(500).json({ erro: "Não foi possível apagar a tarefa" })
   }
 })
 
@@ -139,7 +143,8 @@ app.patch('/tarefa/:id/completa', validAuth, async (req, res) => {
       completa: true  
     })
     res.json(tarefaAtualizada)
-  } catch {
+  } catch (error) {
+      onsole.error(error)
       if (error instanceof bancoDeDados.ErrorDataBase) { 
         const httpCode = error instanceof bancoDeDados.ErroDeValidacao ? 4040: 404
         res.status(httpCode).json({ erro: error.message})
@@ -154,7 +159,8 @@ app.patch('/tarefa/:id/incompleta', validAuth, async (req, res) => {
       completa: false  
     })
     res.json(tarefaAtualizada)
-  } catch {
+  } catch (error) {
+      console.error(error)
       if (error instanceof bancoDeDados.ErrorDataBase) { 
         const httpCode = error instanceof bancoDeDados.ErroDeValidacao ? 4040: 404
         res.status(httpCode).json({ erro: error.message})
