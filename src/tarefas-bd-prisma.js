@@ -83,15 +83,15 @@ export async function updateWork(id, tarefa) {
 
 export async function deleteWork(id) {
 
-    const tarefas = await readWorks()
-    const index = tarefas.findIndex(tarefa => tarefa.id === id)
-    if (index < 0) {
-        throw new ErroDeOperacao("A tarefa não existe." )
+    const tarefaExistente = await prisma.tarefa.findUnique({where: {id}})
+    
+    if (!tarefaExistente) {
+        throw new ErroDeOperacao("Tarefa não encontrada.")
     }
 
-
-    const tarefaApagada = tarefas.splice(index, 1)[0]
-    await saveWorks(tarefas)
+    const tarefaApagada = prisma.tarefa.delete({
+        where: {id: tarefaExistente.id}
+    })
 
     return tarefaApagada
 }
