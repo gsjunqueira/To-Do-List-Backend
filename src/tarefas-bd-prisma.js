@@ -46,12 +46,12 @@ export async function getWork(id) {
 // CRUD - Update
 
 export async function updateWork(id, tarefa) {
-
+    
     const { Descricao, completa } = tarefa
 
-    const tarefas = await readWorks()
-    const index = tarefas.findIndex(tarefa => tarefa.id === id)
-    if (index < 0) {
+    const tarefaExistente = await prisma.tarefa.findUnique({where: {id}})
+    
+    if (!tarefaExistente) {
         throw new ErroDeOperacao("A tarefa não encontrada.")
     }
 
@@ -66,16 +66,16 @@ export async function updateWork(id, tarefa) {
     if (typeof completa !== 'boolean' && completa !== undefined) {
         throw new ErroDeValidacao('O campo "completa" deve ser booleano.')
     }
-    if (Descricao !== undefined) {
-        tarefas[index].Descricao = Descricao
-    }
-    if (completa !== undefined) {
-        tarefas[index].completa = completa
-    }
 
-    await saveWorks(tarefas)
+    const tarefaAlterada = prisma.tarefa.update({
+        data: {
+            Descricao: Descricao ?? tarefaExistente.descricao,
+            completa: completa ?? tarefaExistente.completa
+        },
+        where: {id}
+    })
 
-    return JSON.parse(JSON.stringify(tarefas[index]))
+    return tarefaAlterada
 
 }
 
