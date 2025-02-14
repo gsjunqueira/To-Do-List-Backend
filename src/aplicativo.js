@@ -115,7 +115,7 @@ app.put('/tarefa/:id', validAuth, async (req, res) => {
   } catch (error) {
       console.error(error)
       if (error instanceof bancoDeDados.ErrorDataBase) { 
-        const httpCode = error instanceof bancoDeDados.ErroDeValidacao ? 4040: 404
+        const httpCode = error instanceof bancoDeDados.ErroDeValidacao ? 400: 404
         res.status(httpCode).json({ erro: error.message})
       }
       res.status(500).json({ erro: "Não foi possível atualizar a tarefa" })
@@ -124,13 +124,14 @@ app.put('/tarefa/:id', validAuth, async (req, res) => {
 
 app.delete('/tarefa/:id', validAuth, async (req, res) => {
   try {
+
     await bancoDeDados.deleteWork(req.params.id)
     
     res.status(204).send()
     } catch (error) {
         console.error(error)
         if (error instanceof bancoDeDados.ErrorDataBase) { 
-          const httpCode = error instanceof bancoDeDados.ErroDeValidacao ? 4040: 404
+          const httpCode = error instanceof bancoDeDados.ErroDeValidacao ? 400: 404
           res.status(httpCode).json({ erro: error.message})
         }
         res.status(500).json({ erro: "Não foi possível apagar a tarefa" })
@@ -144,9 +145,9 @@ app.patch('/tarefa/:id/completa', validAuth, async (req, res) => {
     })
     res.json(tarefaAtualizada)
   } catch (error) {
-      onsole.error(error)
+      console.error(error)
       if (error instanceof bancoDeDados.ErrorDataBase) { 
-        const httpCode = error instanceof bancoDeDados.ErroDeValidacao ? 4040: 404
+        const httpCode = error instanceof bancoDeDados.ErroDeValidacao ? 400: 404
         res.status(httpCode).json({ erro: error.message})
       }
       res.status(500).json({ erro: "Não foi possível completar a tarefa" })
@@ -162,7 +163,7 @@ app.patch('/tarefa/:id/incompleta', validAuth, async (req, res) => {
   } catch (error) {
       console.error(error)
       if (error instanceof bancoDeDados.ErrorDataBase) { 
-        const httpCode = error instanceof bancoDeDados.ErroDeValidacao ? 4040: 404
+        const httpCode = error instanceof bancoDeDados.ErroDeValidacao ? 400: 404
         res.status(httpCode).json({ erro: error.message})
       }
       res.status(500).json({ erro: "Não foi possível tornar a tarefa incompleta" })

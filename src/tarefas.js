@@ -1,5 +1,5 @@
 import * as erros from './tarefas-bd-erros.js'
-import * as bancoDeDados from './tarefas-bd-prisma.js'
+import * as bancoDeDados from './tarefas-bd-arquivo.js'
 
 export const ErrorDataBase = erros.ErrorDataBase
 export const ErroDeValidacao = erros.ErroDeValidacao

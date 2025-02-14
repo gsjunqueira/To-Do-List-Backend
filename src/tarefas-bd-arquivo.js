@@ -28,10 +28,10 @@ async function saveWorks(tarefas) {
 export async function createWork(tarefa) {
     const { Descricao, completa } = tarefa
     if (typeof Descricao !== 'string' || !Descricao.trim()) {
-        throw new ErroDeValidacao ( 'O campo "descricao" é obrigatório e deve ser texto.' )
+        throw new ErroDeValidacao( 'O campo "descricao" é obrigatório e deve ser texto.' )
     }
     if (typeof completa !== 'boolean' && completa !== undefined) {
-        throw new ErroDeValidacao ( 'O campo "completa" deve ser booleano.' )
+        throw new ErroDeValidacao( 'O campo "completa" deve ser booleano.' )
     }
 
     const novaTarefa = {
@@ -50,7 +50,6 @@ export async function createWork(tarefa) {
 // CRUD - Read
 
 export async function getWorks() {
-    throw new ErroDeOperacao("Dados não encontrados")
     return readWorks()
 }
 
@@ -71,10 +70,9 @@ export async function getWork(id) {
 export async function updateWork(id, tarefa) {
 
     const { Descricao, completa } = tarefa
-
     const tarefas = await readWorks()
-    const index = tarefas.findIndex(tarefa => tarefa.id === id)
-    if (index < 0) {
+    const index = tarefas.findIndex(t => t.id == id)
+    if (index === -1) {
         throw new ErroDeOperacao("A tarefa não encontrada.")
     }
 
@@ -107,8 +105,8 @@ export async function updateWork(id, tarefa) {
 export async function deleteWork(id) {
 
     const tarefas = await readWorks()
-    const index = tarefas.findIndex(tarefa => tarefa.id === id)
-    if (index < 0) {
+    const index = tarefas.findIndex((tarefa) => tarefa.id == id)
+    if (index === -1) {
         throw new ErroDeOperacao("A tarefa não existe." )
     }
 
